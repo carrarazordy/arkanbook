@@ -6,71 +6,78 @@ const snapToGrid = (value: number) => Math.round(value / GRID_SIZE) * GRID_SIZE;
 
 interface CanvasAssetProps {
     item: any;
-    defaultX: number;
-    defaultY: number;
-    onSelect: (item: any) => void;
+    x: number;
+    y: number;
+    isSelected: boolean;
+    onSelect: (item: any, multi: boolean) => void;
+    onDragStart: () => void;
+    onDrag: (event: any, info: any) => void;
+    onDragEnd: (event: any, info: any) => void;
 }
 
-export const CanvasAsset: React.FC<CanvasAssetProps> = ({ item, defaultX, defaultY, onSelect }) => {
+export const CanvasAsset: React.FC<CanvasAssetProps> = ({ item, x, y, isSelected, onSelect, onDragStart, onDrag, onDragEnd }) => {
     const [isDragging, setIsDragging] = useState(false);
-
-    // Posição interna que gerencia o snapping manual
-    const [position, setPosition] = useState({ x: defaultX, y: defaultY });
     const [isSnapped, setIsSnapped] = useState(false);
 
     return (
         <motion.div
             drag
             dragMomentum={false}
-            onDragStart={() => setIsDragging(true)}
+            onDragStart={() => {
+                setIsDragging(true);
+                onDragStart();
+            }}
+            onDrag={(e, info) => {
+                // Se é parte da seleção, avisa o pai para mover todo o grupo
+                if (isSelected) {
+                    onDrag(e, info);
+                } else {
+                    // Mover individualmente se nÃ£o estÃ¡ selecionado globalmente
+                    onDrag(e, info);
+                }
+            }}
             onDragEnd={(event, info) => {
                 setIsDragging(false);
-
-                // Calculamos a nova posição baseada no offset do drag + posição anterior
-                const newX = snapToGrid(position.x + info.offset.x);
-                const newY = snapToGrid(position.y + info.offset.y);
-
-                setPosition({ x: newX, y: newY });
-
-                // Dispara o glow de "snapped" momentaneamente
-                setIsSnapped(true);
+                setIsSnapped(true); // Feedback visual no momento do "suction/snap"
                 setTimeout(() => setIsSnapped(false), 200);
+                onDragEnd(event, info);
             }}
-            // Controla a posição visual pós-drag via animate (força o snap fluido)
+            // Animação sempre reflete o estado do pai (X e Y unificados)
             animate={{
-                x: position.x,
-                y: position.y,
-                // Glow na borda (se snapped = box-shadow; senão normal)
-                boxShadow: isSnapped ? "0 0 10px white" : "0 0 0px transparent"
+                x: x,
+                y: y,
+                // Glow na borda se Snapped, ou brilho contínuo se Selected
+                boxShadow: isSnapped ? "0 0 10px white" : (isSelected ? "0 0 15px rgba(255,255,255,0.7)" : "0 0 0px transparent")
             }}
-            // Transição rápida para a força de sucção "snappando"
             transition={{
-                x: { type: "spring", stiffness: 300, damping: 25 },
-                y: { type: "spring", stiffness: 300, damping: 25 },
+                x: { type: "tween", duration: 0 }, // Drag instantâneo ao arrastar o grupo
+                y: { type: "tween", duration: 0 },
                 boxShadow: { duration: 0.2 }
             }}
-            whileDrag={{ scale: 1.02, zIndex: 10 }}
+            whileDrag={{ scale: 1.02, zIndex: 50 }}
             layoutId={`asset-container-${item.id}`} // Mantém o vínculo Layout com o Painel
-            className="absolute bg-matteBlack p-1 cursor-grab active:cursor-grabbing group shadow-md"
-            // Ao invés da left/top do CSS (desativada pois usamos x/y do framer para o snap), passamos absolute 0 e animamos o transform
+            className={`canvas-asset absolute bg-matteBlack p-1 cursor-grab active:cursor-grabbing group shadow-md ${isSelected ? 'z-40' : 'z-10'}`}
             style={{ left: 0, top: 0, width: '400px' }}
+            onClick={(e) => {
+                // Permite multiselect se segurar o shift, ou envia pra ser aberto no Panel
+                onSelect(item, e.shiftKey);
+            }}
         >
-            {/* Guias de Alinhamento (Visível apenas durante o arrasto) */}
+            {/* Guias de Alinhamento (Visíveis apenas durante o arrasto) */}
             {isDragging && (
                 <>
-                    {/* Guia Horizontal (X) */}
                     <div className="absolute top-0 left-[-2000px] right-[-2000px] border-t border-white/20 z-[-1]" />
-                    {/* Guia Vertical (Y) */}
                     <div className="absolute left-0 top-[-2000px] bottom-[-2000px] border-l border-white/20 z-[-1]" />
                 </>
             )}
 
-            <div className="relative overflow-hidden w-full aspect-video" onClick={() => onSelect(item)}>
+            <div className="relative overflow-hidden w-full aspect-video">
                 <motion.img
-                    layoutId={`asset-${item.id}`} // Segredo transição Shared Layout
+                    layoutId={`asset-${item.id}`}
                     src={item.image}
                     alt={item.title}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 pointer-events-none"
+                    // A imagem fica colorida se estiver selecionada no grupo
+                    className={`w-full h-full object-cover transition-all duration-700 pointer-events-none ${isSelected ? 'grayscale-0' : 'grayscale group-hover:grayscale-0'}`}
                     draggable={false}
                 />
 
@@ -82,8 +89,7 @@ export const CanvasAsset: React.FC<CanvasAssetProps> = ({ item, defaultX, defaul
                 />
             </div>
 
-            {/* Header info */}
-            <div className="p-4 border-t border-white/10" onClick={() => onSelect(item)}>
+            <div className="p-4 border-t border-white/10">
                 <h2 className="text-white font-bold uppercase tracking-widest text-xs pointer-events-none">
                     {item.title}
                 </h2>

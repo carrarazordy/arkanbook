@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 // import { useRouter } from 'next/router'; // Exemplo para navegacao
 
-export const EntryVault: React.FC = () => {
+export const EntryVault: React.FC<{ onSuccess?: () => void }> = ({ onSuccess }) => {
     const [designerId, setDesignerId] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const [hasError, setHasError] = useState(false);
@@ -13,8 +13,11 @@ export const EntryVault: React.FC = () => {
         // Auth Flow logic
         if (designerId === 'ARKANA' || designerId === 'ADMIN') { // Exemplo de success
             setHasError(false);
-            // Navegar para /library - adaptar conforme roteador usado (React Router ou Next)
-            window.location.href = '/library';
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                window.location.href = '/library';
+            }
         } else {
             setHasError(true);
             // Resetar estado de erro após a animação

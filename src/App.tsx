@@ -20,9 +20,9 @@ function App() {
 
   return (
     <div className="bg-black min-h-screen text-white w-full overflow-hidden font-sans">
-      <PageTransition>
+      <PageTransition keyPath={currentPage}>
         {currentPage === 'preload' && <Preload />}
-        {currentPage === 'entry' && <EntryVault />}
+        {currentPage === 'entry' && <EntryVault onSuccess={() => setCurrentPage('dashboard')} />}
         {currentPage === 'dashboard' && <Dashboard />}
         {currentPage === 'canvas' && <CreativeCanvas />}
       </PageTransition>
