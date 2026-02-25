@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-black text-white antialiased;
+        font-family: 'Public Sans', sans-serif;
+    }
+
+    .bg-matteBlack {
+        background-color: #1A1A1A;
+    }
+
+    /* Efeito de Grão Sutil (Noise) para o visual fashion */
+    .noise-bg::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.03;
+        z-index: 9999;
+        pointer-events: none;
+        background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+        /* Assegurando que o grain não interfira nos cliques */
+    }
+
+    /* Esconde o cursor padrão */
+    html,
+    body {
+        cursor: none !important;
+    }
+
+    /* Garante que links e botões também não mostrem o cursor padrão */
+    a,
+    button,
+    input {
+        cursor: none !important;
+    }
+
+    /* Mix-blend-difference faz o cursor branco ficar preto quando passa sobre algo branco */
+    .mix-blend-difference {
+        mix-blend-mode: difference;
+    }
+}
