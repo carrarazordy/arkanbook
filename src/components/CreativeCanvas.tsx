@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, useMotionValue } from 'framer-motion';
 import { AnalysisPanel } from './AnalysisPanel';
+import { CanvasAsset } from './CanvasAsset';
 
 // Mock Type
 interface AssetItem {
@@ -62,41 +63,16 @@ export const CreativeCanvas: React.FC = () => {
                     dragConstraints={{ left: -2000, right: 2000, top: -2000, bottom: 2000 }}
                     className="relative w-full h-full"
                 >
-                    {/* Renderizando itens do Canvas */}
+                    {/* Renderizando itens do Canvas usando o Smart Snapping Asset */}
                     {assetItems.map((item, index) => (
-                        <motion.div
+                        <CanvasAsset
                             key={item.id}
-                            drag
-                            dragMomentum={false}
-                            whileDrag={{ scale: 1.02, zIndex: 10 }}
-                            // LayoutId para expansão no AnalysisPanel
-                            layoutId={`asset-container-${item.id}`}
-                            className="absolute bg-matteBlack p-1 cursor-pointer group"
-                            style={{
-                                left: `${20 + (index * 30)}%`, // Offset manual só pro mock
-                                top: `${15 + (index * 15)}%`,
-                                width: '400px'
-                            }}
-                            onClick={() => setSelectedAsset(item)}
-                        >
-                            <div className="relative overflow-hidden w-full aspect-video">
-                                <motion.img
-                                    layoutId={`asset-${item.id}`} // O segredo da transição da Imagem
-                                    src={item.image}
-                                    alt={item.title}
-                                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
-                                />
-                                {/* Linha neon que brilha no clique (Micro-interação) */}
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    whileTap={{ opacity: 1, scale: 1.05 }}
-                                    className="absolute inset-0 border border-white shadow-[0_0_15px_white] pointer-events-none"
-                                />
-                            </div>
-                            <div className="p-4 border-t border-white/10">
-                                <h2 className="text-white font-bold uppercase tracking-widest text-xs">{item.title}</h2>
-                            </div>
-                        </motion.div>
+                            item={item}
+                            // O "Offset" inicial deve ser um múltiplo do grid (40)
+                            defaultX={400 * (index + 1)}
+                            defaultY={200 * (index + 1)}
+                            onSelect={setSelectedAsset}
+                        />
                     ))}
 
                     {/* Círculo de Luz Neon (Centro) */}
