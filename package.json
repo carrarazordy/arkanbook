@@ -1,5 +1,60 @@
 {
+  "name": "arkanbook",
+  "version": "1.0.0",
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "main": "eslint.config.js",
   "dependencies": {
-    "framer-motion": "^12.34.3"
+    "@supabase/supabase-js": "^2.97.0",
+    "@tailwindcss/vite": "^4.2.1",
+    "detect-libc": "^2.1.2",
+    "enhanced-resolve": "^5.19.0",
+    "esbuild": "^0.27.3",
+    "fdir": "^6.5.0",
+    "framer-motion": "^12.34.3",
+    "graceful-fs": "^4.2.11",
+    "iceberg-js": "^0.8.1",
+    "jiti": "^2.6.1",
+    "lightningcss": "^1.31.1",
+    "lightningcss-win32-x64-msvc": "^1.31.1",
+    "magic-string": "^0.30.21",
+    "motion-dom": "^12.34.3",
+    "motion-utils": "^12.29.2",
+    "nanoid": "^3.3.11",
+    "picocolors": "^1.1.1",
+    "picomatch": "^4.0.3",
+    "postcss": "^8.5.6",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "rollup": "^4.59.0",
+    "source-map-js": "^1.2.1",
+    "tailwindcss": "^4.2.1",
+    "tapable": "^2.3.0",
+    "tinyglobby": "^0.2.15",
+    "tslib": "^2.8.1",
+    "undici-types": "^7.18.2",
+    "ws": "^8.19.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carrarazordy/arkanbook.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/carrarazordy/arkanbook/issues"
+  },
+  "homepage": "https://github.com/carrarazordy/arkanbook#readme",
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
   }
 }
